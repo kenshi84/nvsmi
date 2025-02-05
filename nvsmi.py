@@ -23,7 +23,7 @@ import sys
 __version__ = "0.4.2"
 
 
-NVIDIA_SMI_GET_GPUS = "nvidia-smi --query-gpu=index,uuid,utilization.gpu,memory.total,memory.used,memory.free,driver_version,name,gpu_serial,display_active,display_mode,temperature.gpu --format=csv,noheader,nounits"
+NVIDIA_SMI_GET_GPUS = "nvidia-smi --query-gpu=index,uuid,utilization.gpu,memory.total,memory.used,memory.free,driver_version,name,gpu_serial,display_active,display_mode,temperature.gpu,power.draw --format=csv,noheader,nounits"
 NVIDIA_SMI_GET_PROCS = "nvidia-smi --query-compute-apps=pid,process_name,gpu_uuid,gpu_name,used_memory --format=csv,noheader,nounits"
 
 
@@ -42,6 +42,7 @@ class GPU(object):
         display_mode,
         display_active,
         temperature,
+        power_draw,
     ):
         self.id = id
         self.uuid = uuid
@@ -56,6 +57,7 @@ class GPU(object):
         self.display_mode = display_mode
         self.display_active = display_active
         self.temperature = temperature
+        self.power_draw = power_draw
 
     def __repr__(self):
         msg = "id: {id} | UUID: {uuid} | gpu_util: {gpu_util:5.1f}% | mem_util: {mem_util:5.1f}% | mem_free: {mem_free:7.1f}MB |  mem_total: {mem_total:7.1f}MB"
@@ -106,6 +108,7 @@ def _get_gpu(line):
     display_active = values[9]
     display_mode = values[10]
     temp_gpu = to_float_or_inf(values[11])
+    power_draw = to_float_or_inf(values[12])
     gpu = GPU(
         id,
         uuid,
@@ -119,6 +122,7 @@ def _get_gpu(line):
         display_mode,
         display_active,
         temp_gpu,
+        power_draw,
     )
     return gpu
 
